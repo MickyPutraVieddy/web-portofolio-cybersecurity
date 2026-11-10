@@ -1,0 +1,4 @@
+# unrs-resolver is used by the ESLint TypeScript import resolver.
+# Permit its native optional binding setup during pnpm install.
+allowBuilds:
+  unrs-resolver: true
