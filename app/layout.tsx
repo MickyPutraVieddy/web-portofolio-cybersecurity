@@ -6,6 +6,8 @@ import { ContentProvider } from "@/components/content-provider"
 import { LanguageProvider } from "@/components/language-provider"
 import { parseLocale } from "@/lib/portfolio-content"
 import { getContent } from "@/lib/server/content"
+import { getTranslations } from "@/lib/server/translate"
+import { collectTexts, fillContent } from "@/lib/translate"
 import "@/app/globals.css"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" })
@@ -14,7 +16,7 @@ const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies()
   const locale = parseLocale(cookieStore.get("portfolio-language")?.value)
-  const content = await getContent()
+  const content = fillContent(await getContent(), locale === "id" ? await getTranslations() : {})
   const t = content.copy[locale]
   const name = content.profile.name
   return {
@@ -22,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: t.metaDescription,
     applicationName: `${name} Portfolio`,
     authors: [{ name }],
-    keywords: [name, "Cybersecurity", "SOC Analyst", "Information Security", "Blue Team", "Pune"],
+    keywords: [name, "Cybersecurity", "SOC Analyst", "Information Security", "Blue Team", "Jakarta"],
     openGraph: { title: t.title, description: t.metaDescription, type: "website", locale: locale === "en" ? "en_US" : "id_ID" },
     twitter: { card: "summary", title: t.title, description: t.metaDescription },
     robots: { index: true, follow: true },
@@ -40,6 +42,9 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const cookieStore = await cookies()
   const locale = parseLocale(cookieStore.get("portfolio-language")?.value)
   const content = await getContent()
+  // Indonesian is generated from the English text; the cached translations are sent along so the first paint is already translated.
+  const cached = locale === "id" ? await getTranslations() : {}
+  const translations = Object.fromEntries([...collectTexts(content).keys()].filter((hash) => cached[hash]).map((hash) => [hash, cached[hash]]))
   // Public pages never receive unpublished custom homepage sections or the private template library.
   // The authenticated Admin reads the full document through its protected content API.
   const publicContent = { ...content, customPages: { pages: content.customPages.pages.filter((page) => page.visible), templates: [] } }
@@ -47,7 +52,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={locale} className="dark">
       <body className={`${inter.variable} ${mono.variable} font-sans antialiased`}>
         <ContentProvider initial={publicContent}>
-          <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
+          <LanguageProvider initialLocale={locale} initialTranslations={translations}>{children}</LanguageProvider>
         </ContentProvider>
       </body>
     </html>

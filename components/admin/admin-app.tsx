@@ -66,7 +66,9 @@ function Inner({ user, method }: { user: string; method: string }) {
   const [audit, setAudit] = useState<AuditRow[]>([])
   const [loadError, setLoadError] = useState("")
   const [pageId, setPageId] = useState("studio")
-  const [lang, setLang] = useState<Locale>("en")
+  // English is the only language you write; Indonesian is generated automatically (DeepL).
+  const lang: Locale = "en"
+  const [translating, setTranslating] = useState(false)
   const [device, setDevice] = useState<Device>("desktop")
   const [view, setView] = useState<"edit" | "preview">("edit")
   const [busy, setBusy] = useState(false)
@@ -202,6 +204,25 @@ function Inner({ user, method }: { user: string; method: string }) {
   if (loadError) return <div className="adm-center"><p>{loadError}</p><button className="adm-btn" onClick={() => void load()}>Try again</button></div>
   if (!saved || !draft) return <div className="adm-center"><Loader2 className="adm-spin" aria-hidden="true" /> Loading…</div>
 
+  async function translateNow() {
+    setTranslating(true)
+    try {
+      let pending = 1, blocked = false, lastError = ""
+      for (let round = 0; round < 60 && pending > 0 && !blocked; round++) {
+        const response = await fetch("/api/translate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ warm: true }) })
+        if (!response.ok) throw new Error(`Translate failed (${response.status})`)
+        const result = (await response.json()) as { pending: number; blocked: boolean; error?: string }
+        if (result.error) lastError = result.error
+        pending = result.pending
+        blocked = result.blocked
+        if (result.error && !blocked) break
+      }
+      setToast(blocked ? { kind: "error", text: lastError || "Translation is paused. Try again later." } : pending > 0 ? { kind: "error", text: `${pending} texts still pending — press again.` } : { kind: "ok", text: "Indonesian translation is up to date." })
+    } catch (error) {
+      setToast({ kind: "error", text: error instanceof Error ? error.message : "Translation failed" })
+    } finally { setTranslating(false) }
+  }
+
   const page = visiblePages.find((p) => p.id === pageId) ?? visiblePages.find((p) => p.id === "sections")!
   const props: EditorProps = { draft, update, lang }
 
@@ -210,7 +231,8 @@ function Inner({ user, method }: { user: string; method: string }) {
       <header className="adm-top">
         <div className="adm-brand"><ShieldCheck aria-hidden="true" /><span>Admin</span><small>{user} · {method}</small></div>
         <div className="adm-seg" role="group" aria-label="Editing language">
-          {(["en", "id"] as Locale[]).map((l) => <button key={l} type="button" aria-pressed={lang === l} onClick={() => setLang(l)}><Flag locale={l} className="language-flag" />{l.toUpperCase()}</button>)}
+          <button type="button" aria-pressed="true"><Flag locale="en" className="language-flag" />EN</button>
+          <button type="button" disabled={translating} title="Translate any new or edited text to Indonesian now (published content only)" onClick={translateNow}><Flag locale="id" className="language-flag" />{translating ? "Translating…" : "ID auto"}</button>
         </div>
         <div className="adm-top-actions">
           <span className="adm-state" data-dirty={dirty}>{dirty ? `${changes.length} area${changes.length > 1 ? "s" : ""} changed — not published` : <><Check aria-hidden="true" /> All published · v{saved.version}</>}</span>

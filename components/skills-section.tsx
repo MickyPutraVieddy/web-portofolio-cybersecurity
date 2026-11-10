@@ -82,10 +82,11 @@ interface SkillGroup {
 }
 
 function SkillDistribution({ groups, total, seen }: { groups: SkillGroup[]; total: number; seen: boolean }) {
-  const { t, locale } = usePortfolio()
-  const copy = locale === "id"
-    ? { kicker: "DISTRIBUSI KEAHLIAN", title: "Indeks keahlian", live: "LIVE", published: "KEAHLIAN PUBLIK", indexed: "TERINDEKS", active: "AKTIF", skills: "keahlian", categories: "KATEGORI AKTIF", entries: "ENTRI" }
-    : { kicker: "SKILL DISTRIBUTION", title: "Expertise index", live: "LIVE", published: "PUBLISHED SKILLS", indexed: "INDEXED", active: "ACTIVE", skills: "skills", categories: "ACTIVE CATEGORIES", entries: "ENTRIES" }
+  const { t } = usePortfolio()
+  const copy = {
+    kicker: t.skillDistKicker, title: t.skillDistTitle, live: t.skillDistLive, published: t.skillDistPublished, indexed: t.skillDistIndexed,
+    active: t.skillDistActive, skills: t.skillDistSkills, categories: t.skillDistCategories, entries: t.skillDistEntries,
+  }
   const totalCount = useAnimatedCount(total, seen)
   const labels: Record<Category, string> = {
     red: t.skillGroupRed,
@@ -183,7 +184,7 @@ export function SkillsSection() {
     blue: t.skillGroupBlue,
     general: t.skillGroupGeneral,
   }
-  const activeLabel = locale === "id" ? "AKTIF" : "ACTIVE"
+  const activeLabel = t.skillDistActive
 
   return (
     <section id="skills" className="page-section" aria-labelledby="skills-title">

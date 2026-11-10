@@ -52,13 +52,13 @@ function TimelineSection({ id, index, command }: TimelineProps) {
             <p className="shell-line" aria-hidden="true"><Prompt /> <span className="sh-command">{shownCommand}</span>{!done && <span className="shell-cursor" />}</p>
             <ol className="timeline" data-ready={done}>
               {entries.map((entry, i) => (
-                <li key={`${entry.title}-${i}`} className="timeline-item" style={{ "--i": i } as React.CSSProperties}>
+                <li key={i} className="timeline-item" style={{ "--i": i } as React.CSSProperties}>
                   <span className="timeline-period">{entry.period}</span>
                   <div className="timeline-card">
                     <h3>{entry.title}</h3>
                     <p className="timeline-org">{entry.org}</p>
                     {entry.detail && <p className="timeline-detail">{entry.detail}</p>}
-                    {entry.points && <ul>{entry.points.map((point) => <li key={point}>{point}</li>)}</ul>}
+                    {entry.points && <ul>{entry.points.filter((point) => point.trim()).map((point, n) => <li key={`${n}-${point}`}>{point}</li>)}</ul>}
                   </div>
                 </li>
               ))}
@@ -75,5 +75,5 @@ export function EducationSection() {
   return <TimelineSection id="education" index="01" command={() => "cat education.txt"} />
 }
 export function ExperienceSection() {
-  return <TimelineSection id="experience" index="02" command={(locale) => (locale === "id" ? "cat pengalaman.txt" : "cat experience.txt")} />
+  return <TimelineSection id="experience" index="02" command={() => "cat experience.txt"} />
 }

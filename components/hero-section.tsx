@@ -30,7 +30,7 @@ export function HeroSection() {
             <div className="hero-role"><ChevronRight aria-hidden="true" /><p><AnimatedText text={profile.role[locale]} characters delay={1100} step={47} /><span className="typing-cursor" aria-hidden="true" /></p></div>
             <p className="hero-description"><AnimatedText text={profile.description[locale]} delay={1500} step={16} /></p>
             <ul className="credential-list" aria-label={locale === "en" ? "Certifications" : "Sertifikasi"}>
-              {profile.credentials.map((credential) => <li key={credential}><ShieldCheck aria-hidden="true" /><span>{credential}</span></li>)}
+              {profile.credentials.map((credential, n) => <li key={`${n}-${credential}`}><ShieldCheck aria-hidden="true" /><span>{credential}</span></li>)}
             </ul>
             <div className="hero-actions">
               <div className="resume-action">
@@ -49,7 +49,7 @@ export function HeroSection() {
           <CelestialBackground />
         </div>
         <div className="intro-bottom">
-          <div className="focus-summary"><span className="focus-label">{t.focusLabel}</span><ul>{profile.focus[locale].map((item) => <li key={item}><span aria-hidden="true" />{item}</li>)}</ul></div>
+          <div className="focus-summary"><span className="focus-label">{t.focusLabel}</span><ul>{profile.focus[locale].map((item, n) => <li key={`${n}-${item}`}><span aria-hidden="true" />{item}</li>)}</ul></div>
           <div className="motion-control">
             <Button variant="ghost" size="sm" onClick={() => update({ paused: !paused, introComplete: true })} aria-pressed={paused} aria-label={reducedMotion ? t.reducedMotionHint : paused ? t.play : t.pause} disabled={reducedMotion}>
               {paused || reducedMotion ? <Play data-icon="inline-start" /> : <Pause data-icon="inline-start" />}

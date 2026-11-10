@@ -37,7 +37,7 @@ function Chips({ label, values }: { label: string; values: string[] }) {
   return (
     <div className="train-chipset">
       <span className="train-label">{label}</span>
-      <ul className="proj-stack" aria-label={label}>{values.map((value) => <li key={value}>{value}</li>)}</ul>
+      <ul className="proj-stack" aria-label={label}>{values.map((value, n) => <li key={`${n}-${value}`}>{value}</li>)}</ul>
     </div>
   )
 }
@@ -70,7 +70,7 @@ function TrainingCard({ item, index }: { item: TrainingItem; index: number }) {
         {modules.length > 0 && (
           <details className="train-modules">
             <summary>{t.trainModules} · {modules.length} {t.trainModulesCount}</summary>
-            <ul>{modules.map((value) => <li key={value}>{value}</li>)}</ul>
+            <ul>{modules.map((value, n) => <li key={`${n}-${value}`}>{value}</li>)}</ul>
           </details>
         )}
         <Chips label={t.trainSkills} values={clean(item.skills)} />

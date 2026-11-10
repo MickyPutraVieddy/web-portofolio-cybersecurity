@@ -3,7 +3,9 @@
 import { useEffect, useMemo, type ReactNode } from "react"
 import useSWR, { SWRConfig } from "swr"
 import { useContent } from "@/components/content-provider"
+import { TranslationLayer } from "@/components/translation-layer"
 import type { Locale, PortfolioPreferences } from "@/lib/portfolio-types"
+import type { Dictionary } from "@/lib/translate"
 
 const preferencesKey = "portfolio-ui-preferences"
 const defaults: PortfolioPreferences = {
@@ -79,7 +81,7 @@ function PreferenceEffects() {
   return null
 }
 
-export function LanguageProvider({ initialLocale, children }: { initialLocale: Locale; children: ReactNode }) {
+export function LanguageProvider({ initialLocale, initialTranslations = {}, children }: { initialLocale: Locale; initialTranslations?: Dictionary; children: ReactNode }) {
   const configuration = useMemo(() => ({
     provider: () => new Map(),
     fallback: { [preferencesKey]: { ...defaults, locale: initialLocale } },
@@ -89,8 +91,10 @@ export function LanguageProvider({ initialLocale, children }: { initialLocale: L
 
   return (
     <SWRConfig value={configuration}>
-      <PreferenceEffects />
-      {children}
+      <TranslationLayer initial={initialTranslations}>
+        <PreferenceEffects />
+        {children}
+      </TranslationLayer>
     </SWRConfig>
   )
 }

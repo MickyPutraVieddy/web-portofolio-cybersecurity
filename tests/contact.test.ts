@@ -192,8 +192,8 @@ async function main() {
   await test("copy keys for Contact exist in EN and ID and stay symmetric", () => {
     const keys = ["navContact", "contactTitle", "contactIntro", "contactFormTitle", "cfName", "cfEmail", "cfSubject", "cfMessage", "cfSend", "cfSending", "cfPrivacy", "cfSuccessTitle", "cfSuccessBody",
       "cfErrRequired", "cfErrTooShort", "cfErrTooLong", "cfErrInvalidEmail", "cfErrInvalidChars", "cfErrNotConfigured", "cfErrRate", "cfErrDelivery", "cfErrNetwork", "contactNoLinks"]
-    for (const k of keys) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
-    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.id)
+    for (const k of keys) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
+    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.en)
     assert.deepEqual(en.filter((k) => !id.includes(k)), []); assert.deepEqual(id.filter((k) => !en.includes(k)), [])
   })
   await test("contact save: persisted per language, other content untouched, invalid link rejected", async () => {

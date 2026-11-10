@@ -85,7 +85,7 @@ export function WriteupsSection() {
                       </div>
                       <h3>{item.title}</h3>
                       {item.summary[locale] && <p>{item.summary[locale]}</p>}
-                      {item.tags.length > 0 && <ul className="proj-stack" aria-label={t.wuFilterTag}>{item.tags.map((name) => <li key={name}>{name}</li>)}</ul>}
+                      {item.tags.length > 0 && <ul className="proj-stack" aria-label={t.wuFilterTag}>{item.tags.map((name, n) => <li key={`${n}-${name}`}>{name}</li>)}</ul>}
                       {item.url
                         ? <a className="cert-link wu-read" href={item.url} target="_blank" rel="noopener noreferrer" aria-label={`${t.wuRead}: ${item.title}`}>{t.wuRead}<ExternalLink aria-hidden="true" /></a>
                         : <span className="wu-nolink">{t.wuNoLink}</span>}

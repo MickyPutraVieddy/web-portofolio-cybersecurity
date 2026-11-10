@@ -44,7 +44,7 @@ function StackChips({ item, limit }: { item: Project; limit?: number }) {
   const shown = limit ? all.slice(0, limit) : all
   return (
     <ul className="proj-stack" aria-label={t.projColStack}>
-      {shown.map((tool) => <li key={tool}>{tool}</li>)}
+      {shown.map((tool, n) => <li key={`${n}-${tool}`}>{tool}</li>)}
       {limit && all.length > limit && <li className="proj-more">+{all.length - limit}</li>}
     </ul>
   )

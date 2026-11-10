@@ -29,6 +29,7 @@ Copy `.env.example` to `.env.local`. `node scripts/admin-setup.mjs "<password>"`
 | `SESSION_SECRET` | yes | Session signing key (32+ characters) |
 | `ADMIN_PASSWORD_HASH` | yes | Admin password hash |
 | `SITE_URL` | yes | Public HTTPS origin (used for passkeys and OAuth) |
+| `MYMEMORY_EMAIL` | no | Any email address. Raises the free MyMemory translation quota from ~5,000 to ~50,000 characters/day |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | on Vercel | Upstash Redis REST credentials (`UPSTASH_REDIS_REST_*` also accepted) |
 | `DATA_DIR` | no | File store path for local/self-hosted use (default `./.data`) |
 | `ADMIN_TOTP_SECRET` | no | Fixed TOTP secret (otherwise managed from Admin → Security) |

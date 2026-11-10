@@ -113,8 +113,7 @@ function HeaderNavigationEditor(p: EditorProps) {
               </div>
               {editingId === section.id && (
                 <div className="adm-header-nav-edit">
-                  <TextField label={`${item.label} label (EN)`} value={draft.copy.en[item.key] ?? ""} max={80} onChange={(v) => update((d) => { d.copy.en[item.key] = v })} />
-                  <TextField label={`${item.label} label (ID)`} value={draft.copy.id[item.key] ?? ""} max={80} onChange={(v) => update((d) => { d.copy.id[item.key] = v })} />
+                  <TextField label={`${item.label} label`} value={draft.copy.en[item.key] ?? ""} max={80} onChange={(v) => update((d) => { d.copy.en[item.key] = v })} />
                 </div>
               )}
             </div>
@@ -1010,7 +1009,8 @@ export function PageIntro({ children }: { children: ReactNode }) { return <>{chi
 type StarterKind = "blank" | "portfolio" | "article" | "research" | "gallery"
 type BlockKind = CustomBlock["type"]
 const makeStudioId = (prefix: string) => `${prefix}-${typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID().replace(/-/g, "").slice(0, 12) : Math.random().toString(36).slice(2, 14).padEnd(12, "0")}`
-const studioText = (en = "", id = ""): { en: string; id: string } => ({ en, id })
+/** English only: the Indonesian side is generated automatically and never authored. */
+const studioText = (en = "", _id = ""): { en: string; id: string } => ({ en, id: "" })
 const palettes = {
   blue: { accent: "#55aaff", secondary: "#338cff" },
   red: { accent: "#ff647c", secondary: "#dc365f" },

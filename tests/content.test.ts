@@ -215,9 +215,9 @@ async function main() {
     assert.equal(siteContentSchema.safeParse(c).success, false)
   })
   await test("every new copy key exists in both languages", () => {
-    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.id)
+    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.en)
     assert.deepEqual(en.filter((k) => !id.includes(k)), []); assert.deepEqual(id.filter((k) => !en.includes(k)), [])
-    for (const k of ["emptyBadge", "emptyTitle", "emptyText", "certTitle", "certGroupPro", "certGroupNon"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
+    for (const k of ["emptyBadge", "emptyTitle", "emptyText", "certTitle", "certGroupPro", "certGroupNon"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
   })
 
   console.log("skills")
@@ -244,7 +244,7 @@ async function main() {
     assert.equal(siteContentSchema.safeParse(c).success, false)
   })
   await test("skills copy keys exist in EN and ID, incl. level names", () => {
-    for (const k of ["skillsTitle", "skillsIntro", "skillGroupRed", "skillGroupBlue", "skillGroupGeneral", "skillColSkill", "skillLevel0", "skillLevel1", "skillLevel5", "navSkills"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
+    for (const k of ["skillsTitle", "skillsIntro", "skillGroupRed", "skillGroupBlue", "skillGroupGeneral", "skillColSkill", "skillLevel0", "skillLevel1", "skillLevel5", "navSkills"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
   })
 
   console.log("mitre")
@@ -265,8 +265,8 @@ async function main() {
     const c = clone(defaultContent); for (let i = 0; i < 201; i++) c.mitre.items.push(mt({ id: `m-test${String(i).padStart(4, "0")}` }))
     assert.equal(siteContentSchema.safeParse(c).success, false)
     assert.equal(mitreTacticIds.length, 14)
-    for (const id of mitreTacticIds) assert.ok(defaultContent.copy.en[`mitreTac_${id}`] && defaultContent.copy.id[`mitreTac_${id}`], id)
-    for (const k of ["mitreTitle", "mitreIntro", "mitreNote", "mitreExp_studied", "mitreExp_work", "navMitre"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
+    for (const id of mitreTacticIds) assert.ok(defaultContent.copy.en[`mitreTac_${id}`] && defaultContent.copy.en[`mitreTac_${id}`], id)
+    for (const k of ["mitreTitle", "mitreIntro", "mitreNote", "mitreExp_studied", "mitreExp_work", "navMitre"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
   })
 
   console.log("projects")
@@ -289,8 +289,8 @@ async function main() {
   await test("projects rejects >60 items; copy keys exist in EN and ID", () => {
     const c = clone(defaultContent); for (let i = 0; i < 61; i++) c.projects.items.push(proj({ id: `p-test${String(i).padStart(4, "0")}` }))
     assert.equal(siteContentSchema.safeParse(c).success, false)
-    for (const k of ["navProjects", "projectsTitle", "projectsIntro", "projectsGroupPro", "projectsGroupNon", "projFeatured", "projColProject", "projStatus_completed", "projStatus_in-progress", "projStatus_archived", "projSecOutcome", "projLinkRepo"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
-    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.id)
+    for (const k of ["navProjects", "projectsTitle", "projectsIntro", "projectsGroupPro", "projectsGroupNon", "projFeatured", "projColProject", "projStatus_completed", "projStatus_in-progress", "projStatus_archived", "projSecOutcome", "projLinkRepo"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
+    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.en)
     assert.deepEqual(en.filter((k) => !id.includes(k)), []); assert.deepEqual(id.filter((k) => !en.includes(k)), [])
   })
 
@@ -319,8 +319,8 @@ async function main() {
     for (const type of ["language", "scripting", "framework", "platform", "security-tool", "other"]) keys.push(`toolType_${type}`)
     for (const d of ["red", "blue", "purple", "general", "dfir", "web"]) keys.push(`toolDomain_${d}`)
     for (const l of ["familiar", "practicing", "proficient"]) keys.push(`toolLevel_${l}`)
-    for (const k of keys) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
-    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.id)
+    for (const k of keys) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
+    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.en)
     assert.deepEqual(en.filter((k) => !id.includes(k)), []); assert.deepEqual(id.filter((k) => !en.includes(k)), [])
   })
   console.log("training & labs")
@@ -348,8 +348,8 @@ async function main() {
   await test("training rejects >120 items; copy keys exist in EN and ID and stay symmetric", () => {
     const c = clone(defaultContent); for (let i = 0; i < 121; i++) c.training.items.push(tr({ id: `t-test${String(i).padStart(4, "0")}` }))
     assert.equal(siteContentSchema.safeParse(c).success, false)
-    for (const k of ["navTraining", "trainingTitle", "trainingIntro", "trainSecTraining", "trainSecLab", "trainStatus_completed", "trainStatus_in-progress", "trainStatus_planned", "trainEvidenceLab", "trainEvidenceTraining", "trainShowMore"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
-    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.id)
+    for (const k of ["navTraining", "trainingTitle", "trainingIntro", "trainSecTraining", "trainSecLab", "trainStatus_completed", "trainStatus_in-progress", "trainStatus_planned", "trainEvidenceLab", "trainEvidenceTraining", "trainShowMore"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
+    const en = Object.keys(defaultContent.copy.en), id = Object.keys(defaultContent.copy.en)
     assert.deepEqual(en.filter((k) => !id.includes(k)), []); assert.deepEqual(id.filter((k) => !en.includes(k)), [])
   })
 
@@ -370,7 +370,7 @@ async function main() {
   await test("achievements reject >80 items; copy keys EN+ID", () => {
     const c = clone(defaultContent); for (let i = 0; i < 81; i++) c.achievements.items.push(ac({ id: `a-test${String(i).padStart(4, "0")}` }))
     assert.equal(siteContentSchema.safeParse(c).success, false)
-    for (const k of ["navAchievements", "achievementsTitle", "achievementsIntro", "achColYear", "achColTitle", "achColDesc", "achColProof", "achViewProof", "achSearch", "achNoResults", "achShowMore", "achStatTotal"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
+    for (const k of ["navAchievements", "achievementsTitle", "achievementsIntro", "achColYear", "achColTitle", "achColDesc", "achColProof", "achViewProof", "achSearch", "achNoResults", "achShowMore", "achStatTotal"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
   })
 
   console.log("writeups")
@@ -390,7 +390,7 @@ async function main() {
   await test("writeups reject >100 items; copy keys EN+ID", () => {
     const c = clone(defaultContent); for (let i = 0; i < 101; i++) c.writeups.items.push(wu({ id: `w-test${String(i).padStart(4, "0")}` }))
     assert.equal(siteContentSchema.safeParse(c).success, false)
-    for (const k of ["navWriteups", "writeupsTitle", "writeupsIntro", "wuRead", "wuNoLink", "wuSearch", "wuFilterTag", "wuNoResults", "wuShowMore", "wuStatTotal", "wuStatBlogs"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.id[k], k)
+    for (const k of ["navWriteups", "writeupsTitle", "writeupsIntro", "wuRead", "wuNoLink", "wuSearch", "wuFilterTag", "wuNoResults", "wuShowMore", "wuStatTotal", "wuStatBlogs"]) assert.ok(defaultContent.copy.en[k] && defaultContent.copy.en[k], k)
   })
 
   console.log("save / restore (file store)")
