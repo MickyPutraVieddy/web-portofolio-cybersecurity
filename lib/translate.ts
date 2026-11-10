@@ -41,9 +41,9 @@ export function hashText(text: string): string {
  * "  whoami      who I am" -> prefix "  whoami      ", body "who I am".
  */
 export function splitShape(text: string): { prefix: string; body: string; suffix: string } {
-  const command = /^(\s*\S+\s{2,})(\S.*?)(\s*)$/s.exec(text)
+  const command = /^(\s*\S+\s{2,})(\S[\s\S]*?)(\s*)$/.exec(text)
   if (command && /^\s+/.test(text)) return { prefix: command[1], body: command[2], suffix: command[3] }
-  const plain = /^(\s*)(.*?)(\s*)$/s.exec(text)!
+  const plain = /^(\s*)([\s\S]*?)(\s*)$/.exec(text)!
   return { prefix: plain[1], body: plain[2], suffix: plain[3] }
 }
 
