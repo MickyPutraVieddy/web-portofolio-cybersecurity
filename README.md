@@ -1,56 +1,126 @@
 # Cybersecurity Portfolio
 
-Bilingual (EN / ID) portfolio site with an owner-only admin CMS.
+Bilingual (English / Indonesian) cybersecurity portfolio with an owner-only Admin CMS.
 
-**Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 3 · Zod · SWR · SimpleWebAuthn
+**Live Website:** https://web-portofolio-cybersecurity-three.vercel.app
+
+**Tech Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS · Upstash Redis
 
 ## Requirements
 
 - Node.js 22.x
 - pnpm 10.26.0
 
-## Commands
+## 1. Local Installation
 
-| Command | Purpose |
+Clone the repository:
+
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd <PROJECT_DIRECTORY>
+```
+
+Install dependencies:
+
+```bash
+corepack enable
+corepack prepare pnpm@10.26.0 --activate
+pnpm install
+```
+
+Create environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+Generate admin credentials:
+
+```bash
+node scripts/admin-setup.mjs "YOUR_ADMIN_PASSWORD"
+```
+
+Copy the generated `SESSION_SECRET` and `ADMIN_PASSWORD_HASH` into `.env.local`.
+
+Configure:
+
+```env
+SESSION_SECRET="YOUR_GENERATED_SECRET"
+ADMIN_PASSWORD_HASH="YOUR_GENERATED_HASH"
+SITE_URL="http://localhost:3000"
+DATA_DIR="./.data"
+```
+
+Start the development server:
+
+```bash
+pnpm dev
+```
+
+Open: http://localhost:3000
+
+## 2. Deploy to Vercel
+
+1. Push the project to GitHub.
+2. Open [Vercel Dashboard](https://vercel.com/dashboard).
+3. Select **Add New → Project**.
+4. Import your GitHub repository.
+5. Configure:
+
+| Setting | Value |
 |---|---|
-| `pnpm install` | Install dependencies |
-| `pnpm dev` | Development server |
-| `pnpm build` / `pnpm start` | Production build / server |
-| `pnpm typecheck` | TypeScript check |
-| `pnpm lint` | ESLint |
-| `pnpm test` | Unit and integration tests |
+| Framework | Next.js |
+| Node.js | 22.x |
+| Install Command | `pnpm install` |
+| Build Command | `pnpm build` |
+| Output Directory | Default |
 
-## Environment
+### Environment Variables
 
-Copy `.env.example` to `.env.local`. `node scripts/admin-setup.mjs "<password>"` prints `SESSION_SECRET` and `ADMIN_PASSWORD_HASH`.
+Go to **Vercel → Settings → Environment Variables** and add:
 
-| Variable | Required | Description |
-|---|---|---|
-| `SESSION_SECRET` | yes | Session signing key (32+ characters) |
-| `ADMIN_PASSWORD_HASH` | yes | Admin password hash |
-| `SITE_URL` | yes | Public HTTPS origin (used for passkeys and OAuth) |
-| `MYMEMORY_EMAIL` | no | Any email address. Raises the free MyMemory translation quota from ~5,000 to ~50,000 characters/day |
-| `KV_REST_API_URL`, `KV_REST_API_TOKEN` | on Vercel | Upstash Redis REST credentials (`UPSTASH_REDIS_REST_*` also accepted) |
-| `DATA_DIR` | no | File store path for local/self-hosted use (default `./.data`) |
-| `ADMIN_TOTP_SECRET` | no | Fixed TOTP secret (otherwise managed from Admin → Security) |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS` | no | Google sign-in |
-| `WEBAUTHN_ORIGIN`, `WEBAUTHN_RP_ID` | no | Passkey overrides |
-| `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` | no | Contact form email delivery |
+| Variable | Description |
+|---|---|
+| `SESSION_SECRET` | Generated session secret |
+| `ADMIN_PASSWORD_HASH` | Generated admin password hash |
+| `SITE_URL` | `https://web-portofolio-cybersecurity-three.vercel.app` |
+| `KV_REST_API_URL` | Upstash Redis REST URL |
+| `KV_REST_API_TOKEN` | Upstash Redis REST token |
 
-## Deploy (Vercel)
+### Upstash Redis Setup
 
-Framework preset **Next.js**, Node.js **22.x**, package manager **pnpm** (commit `pnpm-lock.yaml`), default build command and output directory. Set the variables above, including Upstash Redis credentials, since the file store is not available on Vercel.
+1. Open [Vercel Marketplace – Upstash](https://vercel.com/marketplace/upstash).
+2. Install the Upstash Redis integration.
+3. Create or connect a Redis database.
+4. Link it to your Vercel project.
+5. Verify the Redis environment variables.
+6. Redeploy your application.
 
-## Structure
+**Note:** Upstash Redis is required for persistent application storage on Vercel. Local file storage is used for localhost development.
 
-```
-app/          routes, API handlers, global styles
-components/   public sections and admin UI
-lib/          content schema, defaults, server logic (auth, storage, passkeys, 2FA)
-scripts/      admin setup and 2FA reset utilities
-tests/        test suites
-```
+## 3. Admin Usage
 
-## License
+- Open the deployed website.
+- Access the Admin login page.
+- Sign in using your configured admin credentials.
+- Manage portfolio content through the Admin CMS.
+- Configure TOTP and Passkeys through **Admin → Security**, where supported.
 
-Apache-2.0
+## 4. Available Commands
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start localhost |
+| `pnpm build` | Production build |
+| `pnpm start` | Run production server |
+| `pnpm typecheck` | TypeScript validation |
+| `pnpm lint` | Run ESLint |
+| `pnpm test` | Run tests |
+
+## 5. License
+
+Apache-2.0 — See [LICENSE](./LICENSE).
+
+---
+
+**Understand the Attack. Strengthen the Defense. Secure the Future.**
