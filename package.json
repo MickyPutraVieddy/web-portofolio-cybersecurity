@@ -8,12 +8,14 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "pnpm run test:content && pnpm run test:contact && pnpm run test:sections && pnpm run test:twofa && pnpm run test:passkey",
+    "test": "pnpm run test:content && pnpm run test:contact && pnpm run test:sections && pnpm run test:twofa && pnpm run test:passkey && pnpm run test:visitors && pnpm run test:analytics",
     "test:content": "tsx tests/content.test.ts",
     "test:contact": "tsx tests/contact.test.ts",
     "test:sections": "tsx tests/sections.test.ts",
     "test:twofa": "tsx tests/twofa.test.ts",
-    "test:passkey": "tsx tests/passkey.test.ts"
+    "test:passkey": "tsx tests/passkey.test.ts",
+    "test:visitors": "tsx tests/visitors.test.ts",
+    "test:analytics": "tsx tests/analytics-backends.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.2.1",

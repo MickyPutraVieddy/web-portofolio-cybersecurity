@@ -2118,6 +2118,27 @@ class StorageNotConfigured extends Error {
         if (!response.ok) throw new Error(`Storage request failed (${response.status})`);
         return (await response.json()).result;
     }
+    async function pipeline(commands) {
+        const response = await fetch(`${url.replace(/\/+$/, "")}/pipeline`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(commands),
+            cache: "no-store"
+        });
+        if (!response.ok) throw new Error(`Storage request failed (${response.status})`);
+        const rows = await response.json();
+        if (!Array.isArray(rows) || rows.some((row)=>row?.error)) throw new Error("Storage request failed");
+        return rows.map((row)=>row.result);
+    }
+    const toNumbers = (raw)=>{
+        const out = {};
+        if (Array.isArray(raw)) for(let i = 0; i + 1 < raw.length; i += 2)out[String(raw[i])] = Number(raw[i + 1]);
+        else if (raw && typeof raw === "object") for (const [field, value] of Object.entries(raw))out[field] = Number(value);
+        return out;
+    };
     return {
         async get (key) {
             return await call([
@@ -2143,12 +2164,89 @@ class StorageNotConfigured extends Error {
                 "GETDEL",
                 key
             ]) ?? null;
+        },
+        async hincr (key, field, by = 1, ttlSeconds) {
+            const value = Number(await call([
+                "HINCRBY",
+                key,
+                field,
+                by
+            ]));
+            if (ttlSeconds && value === by) await call([
+                "EXPIRE",
+                key,
+                ttlSeconds
+            ]); // first write of this field: make sure the hash cannot live forever
+            return value;
+        },
+        async hgetall (key) {
+            return toNumbers(await call([
+                "HGETALL",
+                key
+            ]));
+        },
+        async delMany (keys) {
+            for(let i = 0; i < keys.length; i += 200)await pipeline(keys.slice(i, i + 200).map((key)=>[
+                    "DEL",
+                    key
+                ]));
+        },
+        async hgetallMany (keys) {
+            if (keys.length === 0) return [];
+            return (await pipeline(keys.map((key)=>[
+                    "HGETALL",
+                    key
+                ]))).map(toNumbers);
+        },
+        async lpush (key, value, max, ttlSeconds) {
+            await pipeline([
+                [
+                    "LPUSH",
+                    key,
+                    value
+                ],
+                [
+                    "LTRIM",
+                    key,
+                    0,
+                    max - 1
+                ],
+                ...ttlSeconds ? [
+                    [
+                        "EXPIRE",
+                        key,
+                        ttlSeconds
+                    ]
+                ] : []
+            ]);
+        },
+        async lrange (key, count) {
+            const raw = await call([
+                "LRANGE",
+                key,
+                0,
+                count - 1
+            ]);
+            return Array.isArray(raw) ? raw.map(String) : [];
+        },
+        async sadd (key, member, ttlSeconds) {
+            const added = Number(await call([
+                "SADD",
+                key,
+                member
+            ])) === 1;
+            if (added && ttlSeconds) await call([
+                "EXPIRE",
+                key,
+                ttlSeconds
+            ]);
+            return added;
         }
     };
 }
 /** JSON files on disk — for local development or a server with a persistent disk. */ function fileStore(dir) {
     const fileFor = (key)=>__TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$path__$5b$external$5d$__$28$node$3a$path$2c$__cjs$29$__["default"].join(dir, (0, __TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$crypto__$5b$external$5d$__$28$node$3a$crypto$2c$__cjs$29$__["createHash"])("sha256").update(key).digest("hex").slice(0, 40) + ".json");
-    return {
+    const base = {
         async get (key) {
             try {
                 return await __TURBOPACK__imported__module__$5b$externals$5d2f$node$3a$fs__$5b$external$5d$__$28$node$3a$fs$2c$__cjs$29$__["promises"].readFile(fileFor(key), "utf8");
@@ -2191,6 +2289,49 @@ class StorageNotConfigured extends Error {
                 });
             }
         }
+    };
+    // read-modify-write operations (counters, sets) are queued so concurrent requests in this process never lose an update
+    let queue = Promise.resolve();
+    const serial = (task)=>{
+        const run = queue.then(task, task);
+        queue = run.catch(()=>undefined);
+        return run;
+    };
+    const readJson = async (key, fallback)=>{
+        const raw = await base.get(key);
+        if (!raw) return fallback;
+        try {
+            return JSON.parse(raw);
+        } catch  {
+            return fallback;
+        }
+    };
+    return {
+        ...base,
+        hincr: (key, field, by = 1)=>serial(async ()=>{
+                const hash = await readJson(key, {});
+                hash[field] = (Number(hash[field]) || 0) + by;
+                await base.set(key, JSON.stringify(hash));
+                return hash[field];
+            }),
+        hgetall: async (key)=>readJson(key, {}),
+        delMany: (keys)=>serial(async ()=>{
+                await Promise.all(keys.map((key)=>base.del(key)));
+            }),
+        hgetallMany: async (keys)=>Promise.all(keys.map((key)=>readJson(key, {}))),
+        lpush: (key, value, max)=>serial(async ()=>{
+                const list = await readJson(key, []);
+                list.unshift(value);
+                await base.set(key, JSON.stringify(list.slice(0, max)));
+            }),
+        lrange: async (key, count)=>(await readJson(key, [])).slice(0, count),
+        sadd: (key, member)=>serial(async ()=>{
+                const members = await readJson(key, []);
+                if (members.includes(member)) return false;
+                members.push(member);
+                await base.set(key, JSON.stringify(members));
+                return true;
+            })
     };
 }
 let cached = null;
@@ -2589,13 +2730,13 @@ function hashText(text) {
     return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
 }
 function splitShape(text) {
-    const command = /^(\s*\S+\s{2,})(\S.*?)(\s*)$/s.exec(text);
+    const command = /^(\s*\S+\s{2,})(\S[\s\S]*?)(\s*)$/.exec(text);
     if (command && /^\s+/.test(text)) return {
         prefix: command[1],
         body: command[2],
         suffix: command[3]
     };
-    const plain = /^(\s*)(.*?)(\s*)$/s.exec(text);
+    const plain = /^(\s*)([\s\S]*?)(\s*)$/.exec(text);
     return {
         prefix: plain[1],
         body: plain[2],

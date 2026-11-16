@@ -4,6 +4,8 @@ import { cookies } from "next/headers"
 import { Inter, IBM_Plex_Mono } from "next/font/google"
 import { ContentProvider } from "@/components/content-provider"
 import { LanguageProvider } from "@/components/language-provider"
+import { VercelAnalytics } from "@/components/vercel-analytics"
+import { VisitBeacon } from "@/components/visit-beacon"
 import { parseLocale } from "@/lib/portfolio-content"
 import { getContent } from "@/lib/server/content"
 import { getTranslations } from "@/lib/server/translate"
@@ -52,7 +54,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={locale} className="dark">
       <body className={`${inter.variable} ${mono.variable} font-sans antialiased`}>
         <ContentProvider initial={publicContent}>
-          <LanguageProvider initialLocale={locale} initialTranslations={translations}>{children}</LanguageProvider>
+          <LanguageProvider initialLocale={locale} initialTranslations={translations}><VisitBeacon />{children}</LanguageProvider>
+          <VercelAnalytics />
         </ContentProvider>
       </body>
     </html>

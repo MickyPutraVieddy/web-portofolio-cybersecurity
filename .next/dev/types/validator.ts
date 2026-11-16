@@ -250,10 +250,40 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/api/admin/vercel-analytics/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/vercel-analytics">> = Specific
+  const handler = {} as typeof import("../../../app/api/admin/vercel-analytics/route.js")
+  type __Check = __IsExpected<typeof handler>
+  
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/admin/visitors/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/admin/visitors">> = Specific
+  const handler = {} as typeof import("../../../app/api/admin/visitors/route.js")
+  type __Check = __IsExpected<typeof handler>
+  
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/api/contact/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/contact">> = Specific
   const handler = {} as typeof import("../../../app/api/contact/route.js")
+  type __Check = __IsExpected<typeof handler>
+  
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/api/hit/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/hit">> = Specific
+  const handler = {} as typeof import("../../../app/api/hit/route.js")
   type __Check = __IsExpected<typeof handler>
   
   // @ts-ignore

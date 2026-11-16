@@ -1,4 +1,13 @@
 {
+  "/admin/login/page": "app/admin/login/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/admin/2fa/route": "app/api/admin/2fa/route.js",
+  "/api/admin/audit/route": "app/api/admin/audit/route.js",
+  "/api/admin/content/route": "app/api/admin/content/route.js",
+  "/api/admin/passkey/route": "app/api/admin/passkey/route.js",
+  "/api/admin/vercel-analytics/route": "app/api/admin/vercel-analytics/route.js",
+  "/api/admin/visitors/route": "app/api/admin/visitors/route.js",
+  "/api/hit/route": "app/api/hit/route.js",
   "/api/translate/route": "app/api/translate/route.js",
   "/page": "app/page.js"
 }

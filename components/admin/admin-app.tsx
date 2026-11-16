@@ -7,6 +7,7 @@ import { AboutEditor, AchievementsEditor, CertificationsEditor, ContactEditor, F
 import { ConfirmProvider, useConfirm } from "@/components/admin/ui"
 import { TwoFactorPanel } from "@/components/admin/two-factor"
 import { PasskeyPanel } from "@/components/admin/passkeys"
+import { VisitorsPanel } from "@/components/admin/visitors"
 import { Flag } from "@/components/flags"
 import type { SiteContent } from "@/lib/content-schema"
 import type { Locale } from "@/lib/portfolio-types"
@@ -290,6 +291,7 @@ function Inner({ user, method }: { user: string; method: string }) {
           </div>
           {page.render ? page.render(props) : (
             <>
+              <VisitorsPanel />
               <PasskeyPanel onNotice={(kind, text) => setToast({ kind, text })} />
               <TwoFactorPanel onNotice={(kind, text) => setToast({ kind, text })} />
               <section className="adm-group">
